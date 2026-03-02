@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Ubicaciones - Warehouse Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-geo-alt me-2"></i>Gestión de Ubicaciones</h2>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    {{ error }}
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Nueva Ubicación</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/locations/create">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="percha" class="form-label">Percha</label>
+                            <input type="number" class="form-control" id="percha" name="percha" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="piso" class="form-label">Piso</label>
+                            <input type="number" class="form-control" id="piso" name="piso" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="columna" class="form-label">Columna</label>
+                            <input type="number" class="form-control" id="columna" name="columna" min="1" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Ubicación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-list me-2"></i>Lista de Ubicaciones</h5>
+            </div>
+            <div class="card-body">
+                {% if locations %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Percha</th>
+                                <th>Piso</th>
+                                <th>Columna</th>
+                                <th>Código</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for location in locations %}
+                            <tr>
+                                <td>{{ location.percha }}</td>
+                                <td>{{ location.piso }}</td>
+                                <td>{{ location.columna }}</td>
+                                <td><strong>P{{ location.percha }}-{{ location.piso }}-{{ location.columna }}</strong></td>
+                                <td>
+                                    {% if location.is_occupied %}
+                                    <span class="badge bg-danger">Ocupada</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Disponible</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not location.is_occupied %}
+                                    <form method="POST" action="/locations/delete/{{ location.id }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('¿Eliminar ubicación?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No hay ubicaciones registradas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

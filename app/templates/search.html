@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar Productos - Warehouse Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-search me-2"></i>Buscar Productos</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-search me-2"></i>Búsqueda</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/search">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="query" 
+                               placeholder="Buscar por nombre, SKU o descripción..." 
+                               value="{{ query }}">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if query %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-list me-2"></i>Resultados ({{ results|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if results %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Cantidad</th>
+                                <th>Categoría</th>
+                                <th>Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in results %}
+                            <tr>
+                                <td><strong>{{ product.sku }}</strong></td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description or '-' }}</td>
+                                <td>
+                                    {% if product.quantity < 10 %}
+                                    <span class="badge bg-warning">{{ product.quantity }}</span>
+                                    {% else %}
+                                    {{ product.quantity }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ product.category or '-' }}</td>
+                                <td>
+                                    {% if product.location %}
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-success me-2">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            P{{ product.location.percha }}-{{ product.location.piso }}-{{ product.location.columna }}
+                                        </span>
+                                    </div>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Sin asignar</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="text-muted mt-2">No se encontraron productos</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

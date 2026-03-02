@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Warehouse Management{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">Sistema de Gestión de Almacén</h1>
+            <p class="lead text-muted">Administra tus productos, ubicaciones y estructura de almacén de manera eficiente</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-box-seam display-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Gestión de Productos</h5>
+                        <p class="card-text text-muted">Registra, actualiza y elimina productos con SKU único</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-geo-alt display-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Ubicaciones</h5>
+                        <p class="card-text text-muted">Organiza por Perchas, Pisos y Columnas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-search display-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Búsqueda Rápida</h5>
+                        <p class="card-text text-muted">Encuentra productos y su ubicación exacta al instante</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="/login" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+            </a>
+        </div>
+
+        <div class="row mt-5 g-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h5>
+                        <p class="card-text">Vista general del estado del almacén con estadísticas en tiempo real</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-grid-3x3 me-2"></i>Estructura</h5>
+                        <p class="card-text">Define la estructura física de tu almacén (perchas, pisos, columnas)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

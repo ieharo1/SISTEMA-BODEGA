@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Estructura del Almacén - Warehouse Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-grid-3x3 me-2"></i>Gestión de Estructura del Almacén</h2>
+        <p class="text-muted">Define la estructura física de tu almacén (perchas, pisos, columnas)</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Nueva Estructura</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/structure/create">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Almacén Principal" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="total_perchas" class="form-label">Total Perchas</label>
+                            <input type="number" class="form-control" id="total_perchas" name="total_perchas" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="total_pisos" class="form-label">Total Pisos</label>
+                            <input type="number" class="form-control" id="total_pisos" name="total_pisos" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="total_columnas" class="form-label">Total Columnas</label>
+                            <input type="number" class="form-control" id="total_columnas" name="total_columnas" min="1" required>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Se crearán automáticamente todas las ubicaciones (percha × piso × columna)
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear Estructura</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-list me-2"></i>Estructuras Creadas</h5>
+            </div>
+            <div class="card-body">
+                {% if structures %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Perchas</th>
+                                <th>Pisos</th>
+                                <th>Columnas</th>
+                                <th>Total Ubicaciones</th>
+                                <th>Fecha Creación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for structure in structures %}
+                            <tr>
+                                <td><strong>{{ structure.name }}</strong></td>
+                                <td>{{ structure.total_perchas }}</td>
+                                <td>{{ structure.total_pisos }}</td>
+                                <td>{{ structure.total_columnas }}</td>
+                                <td><span class="badge bg-primary">{{ structure.total_perchas * structure.total_pisos * structure.total_columnas }}</span></td>
+                                <td>{{ structure.created_at.strftime('%Y-%m-%d') if structure.created_at else '-' }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editModal{{ structure.id }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <form method="POST" action="/structure/delete/{{ structure.id }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('¿Eliminar estructura y todas sus ubicaciones?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            
+                            <div class="modal fade" id="editModal{{ structure.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Editar Estructura</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form method="POST" action="/structure/update/{{ structure.id }}">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nombre</label>
+                                                    <input type="text" class="form-control" name="name" value="{{ structure.name }}">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No hay estructuras creadas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

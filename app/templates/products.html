@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Productos - Warehouse Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-box-seam me-2"></i>Gestión de Productos</h2>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    {{ error }}
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Nuevo Producto</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/products/create">
+                    <div class="mb-3">
+                        <label for="sku" class="form-label">SKU</label>
+                        <input type="text" class="form-control" id="sku" name="sku" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" value="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Categoría</label>
+                        <input type="text" class="form-control" id="category" name="category">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Producto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-list me-2"></i>Lista de Productos</h5>
+            </div>
+            <div class="card-body">
+                {% if products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Cantidad</th>
+                                <th>Categoría</th>
+                                <th>Ubicación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td><strong>{{ product.sku }}</strong></td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description or '-' }}</td>
+                                <td>
+                                    {% if product.quantity < 10 %}
+                                    <span class="badge bg-warning">{{ product.quantity }}</span>
+                                    {% else %}
+                                    {{ product.quantity }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ product.category or '-' }}</td>
+                                <td>
+                                    {% if product.location_id %}
+                                    {% for loc in locations %}
+                                    {% if loc.id == product.location_id %}
+                                    <span class="badge bg-success">P{{ loc.percha }}-{{ loc.piso }}-{{ loc.columna }}</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% else %}
+                                    <span class="badge bg-secondary">Sin asignar</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editModal{{ product.id }}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        {% if not product.location_id %}
+                                        <button type="button" class="btn btn-sm btn-outline-success" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#assignModal{{ product.id }}">
+                                            <i class="bi bi-geo-alt"></i>
+                                        </button>
+                                        {% endif %}
+                                        <form method="POST" action="/products/delete/{{ product.id }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="return confirm('¿Eliminar producto?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Editar Producto</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form method="POST" action="/products/update/{{ product.id }}">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nombre</label>
+                                                    <input type="text" class="form-control" name="name" value="{{ product.name }}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Descripción</label>
+                                                    <textarea class="form-control" name="description">{{ product.description or '' }}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Cantidad</label>
+                                                    <input type="number" class="form-control" name="quantity" value="{{ product.quantity }}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Categoría</label>
+                                                    <input type="text" class="form-control" name="category" value="{{ product.category or '' }}">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal fade" id="assignModal{{ product.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Asignar Ubicación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form method="POST" action="/products/assign/{{ product.id }}">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Seleccionar Ubicación</label>
+                                                    <select class="form-select" name="location_id" required>
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for loc in locations %}
+                                                        {% if not loc.is_occupied %}
+                                                        <option value="{{ loc.id }}">Percha {{ loc.percha }} - Piso {{ loc.piso }} - Columna {{ loc.columna }}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="submit" class="btn btn-success">Asignar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No hay productos registrados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
