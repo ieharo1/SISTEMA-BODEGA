@@ -1,4 +1,4 @@
-# 📱 Página Web Android Studio
+# Sistema de Bodega - FastAPI
 
 Proyecto de aplicación Android desarrollado por **Isaac Esteban Haro Torres**.
 
