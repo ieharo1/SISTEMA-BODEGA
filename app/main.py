@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Warehouse Management System",
+    title="Sistema de Bodega - FastAPI",
     description="Sistema de gestión de almacén",
     version="1.0.0",
     lifespan=lifespan,
